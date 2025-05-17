@@ -1,24 +1,68 @@
 # RedTeamingProject
-This red team operation successfully simulated a targeted cyberattack against 
-the Morning Catch environment. The engagement highlighted critical security 
-gaps, including unpatched legacy systems, weak credential practices, and lack 
-of network segmentation. 
-The operation began with passive and active reconnaissance, where we 
-identified exposed services and extracted valid usernames via SMTP 
-enumeration. Using this information, a reverse shell payload was crafted with 
-msfvenom and disguised as a legitimate system update. The payload was 
-delivered through a phishing email composed and sent via a vulnerable SMTP 
-service, 
-exploiting social engineering techniques to lure the CEO into executing the 
-malicious file. 
-Upon execution, the payload established a reverse shell to the attacker’s 
-machine, enabling full control of the target. Persistence was achieved using a 
-scheduled task that ensured recurring execution of the payload. Command and control were maintained via RDP using valid credentials, followed by privilege 
-escalation to root access. This allowed for full administrative control and set 
-the stage for lateral movement toward a second target within the defined test 
-scope. 
-The engagement successfully demonstrated how a motivated attacker could 
-chain together multiple attack vectors—information gathering, phishing, 
-payload execution, persistence. These findings underscore the need for 
-improved system hardening, user awareness training, and proactive detection 
-capabilities.
+Red Team Operations – Simulated Cyber Attack on "Morning Catch"
+🔍 Overview
+This project simulates a comprehensive red team engagement against a controlled environment provided by the fictional organization Morning Catch. The operation followed a full attack lifecycle inspired by the Cyber Kill Chain model, revealing multiple security vulnerabilities including weak credential practices, lack of network segmentation, vulnerable services, and poor log management.
+
+The simulated adversarial engagement demonstrates real-world attack techniques including OSINT, phishing, reverse shell payload deployment, privilege escalation, persistent access establishment, and log obfuscation—executed ethically and within a scoped, pre-authorized testbed.
+
+Methodology
+The operation followed the Cyber Kill Chain methodology:
+
+1. Reconnaissance
+Passive: OSINT on employees, domains, technologies.
+
+Active: Nmap scanning, SMTP/HTTP enumeration, directory brute-force, employee photo harvesting.
+
+2. Weaponization
+Created reverse shell payload using msfvenom.
+
+Disguised as securityPatch.exe.
+
+3. Delivery
+Crafted phishing email via vulnerable SMTP.
+
+Payload hosted via http.server.
+
+4. Exploitation
+Phishing email deceived CEO.
+
+Execution of securityPatch.exe established reverse shell.
+
+5. Installation (Persistence)
+Created scheduled task (failed).
+
+Achieved persistence via RDP, user creation, and crontab manipulation.
+
+Applied chattr +i to prevent user removal or file modifications.
+
+6. Obfuscation / Anti-forensics
+Used shred to delete logs: /var/log/syslog, /var/log/auth.log, /var/log/xrdp.log.
+
+📌 Key Findings
+Issue	Description
+🔓 Vulnerable Services	Outdated Sendmail 8.14.3
+🔑 Weak Credentials	Exposed employee directory with default credentials
+🔀 No Network Segmentation	Enabled lateral movement
+🎣 Social Engineering	CEO successfully phished
+📂 Insecure Web Directories	Exposed user photos publicly
+🧱 Weak Persistence Controls	Achieved root access with resilient persistence
+🚫 Poor Logging Practices	Logs were deleted without detection
+
+✅ Recommendations
+🔴 Critical
+Monitor and restrict cron/schtasks
+
+Lock down scheduled tasks creation
+
+🟠 High
+Centralize logs and monitor deletions
+
+Deploy File Integrity Monitoring (FIM)
+
+Audit sudoers and restrict root delegation
+
+🟡 Medium
+Monitor access to sensitive files like /etc/passwd and /etc/shadow
+
+🔵 Low
+Disable directory listing and restrict web directories
